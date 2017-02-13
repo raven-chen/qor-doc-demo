@@ -14,6 +14,7 @@ public/system/*
 public/vendors/
 public/view/
 public/index.html
+private/*
 
 # Architecture specific extensions/prefixes
 *.[568vq]
@@ -32,6 +33,7 @@ _testmain.go
 *.prof
 *.db
 .DS_Store
+*.csv
 
 *.log
 *.log.*

@@ -1,44 +1,35 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
-	"github.com/jinzhu/gorm"
-	_ "github.com/mattn/go-sqlite3"
-	"github.com/qor/admin"
-	"github.com/qor/qor"
+	"github.com/raven-chen/qor_doc_demo/config"
+	"github.com/raven-chen/qor_doc_demo/config/routes"
+	_ "github.com/raven-chen/qor_doc_demo/db"
+	_ "github.com/raven-chen/qor_doc_demo/db/migration"
+	"github.com/theplant/appkit/log"
+	"github.com/theplant/appkit/server"
 )
 
-// Create a GORM-backend model
-type User struct {
-	gorm.Model
-	Name string
-}
-
-// Create another GORM-backend model
-type Product struct {
-	gorm.Model
-	Name        string
-	Description string
-}
-
 func main() {
-	DB, _ := gorm.Open("sqlite3", "demo.db")
-	DB.AutoMigrate(&User{}, &Product{})
+	logger := log.Default()
 
-	// Initalize
-	Admin := admin.New(&qor.Config{DB: DB})
-
-	// Create resources from GORM-backend model
-	Admin.AddResource(&User{})
-	Admin.AddResource(&Product{})
-
-	// Register route
-	mux := http.NewServeMux()
-	// amount to /admin, so visit `/admin` to view the admin interface
-	Admin.MountTo("/admin", mux)
-
-	fmt.Println("Listening on: 9000")
-	http.ListenAndServe(":9000", mux)
+	httpLogger := logger.With("origin", "http")
+	server.ListenAndServe(config.Config.HTTP, httpLogger, routes.Mux(httpLogger))
 }
+
+// func setupExchange(db *gorm.DB) {
+// 	// Define Resource
+// 	product := exchange.NewResource(&models.Product{}, exchange.Config{PrimaryField: "Code"})
+// 	// Define columns are exportable/importable
+// 	product.Meta(&exchange.Meta{Name: "Code"})
+// 	product.Meta(&exchange.Meta{Name: "Name"})
+// 	product.Meta(&exchange.Meta{Name: "Price"})
+
+// 	// Define context environment
+// 	context := &qor.Context{DB: db}
+
+// 	// Import products.csv into database
+// 	product.Import(csv.New("products.csv"), context)
+
+// 	// Export products into products.csv
+// 	product.Export(csv.New("products.csv"), context)
+// }
