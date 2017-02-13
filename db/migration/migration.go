@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	Run(true)
+	Run(false)
 }
 
 func Run(force bool) {
